@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Camera Permission Lab</title>
+
+<style>
+body {
+  background: #101010;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 25px;
+}
+
+button {
+  padding: 14px 22px;
+  margin: 8px;
+  border: 0;
+  border-radius: 9px;
+  font-size: 16px;
+}
+
+#start { background: #19c37d; }
+#stop { background: #e5484d; color: white; }
+
+video {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 20px;
+  border-radius: 12px;
+  background: #333;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Camera Permission Lab</h2>
+
+<p>
+This educational demo requests camera access.
+Your camera starts only after you approve the browser permission.
+No photos or videos are uploaded.
+</p>
+
+<button id="start">Allow Camera</button>
+<button id="stop">Stop Camera</button>
+
+<p id="status">Camera is off.</p>
+
+<video id="preview" autoplay playsinline muted></video>
+
+<script>
+let stream = null;
+
+document.getElementById("start").onclick = async () => {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false
+    });
+
+    document.getElementById("preview").srcObject = stream;
+    document.getElementById("status").textContent =
+      "Camera running with your permission.";
+
+  } catch (error) {
+    document.getElementById("status").textContent =
+      "Camera unavailable: " + error.message;
+  }
+};
+
+document.getElementById("stop").onclick = () => {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+
+  document.getElementById("preview").srcObject = null;
+  document.getElementById("status").textContent = "Camera is off.";
+};
+</script>
+
+</body>
+</html>
